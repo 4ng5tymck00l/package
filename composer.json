@@ -17,5 +17,6 @@
         "psr-4": {
             "App\\": "src/"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
