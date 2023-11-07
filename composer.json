@@ -1,0 +1,21 @@
+{
+    "name": "a.vorobeva/study",
+    "type": "project",
+    "description": "",
+    "homepage": "https://github.com/4ng5tymck00l/package",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Anastasia Vorobeva",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
