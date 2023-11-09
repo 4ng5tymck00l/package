@@ -11,86 +11,93 @@ use App\Models\Product;
 
 class ProductController extends BaseController
 {
+    public SchemeValidator $SchemeValidator;
+    public ProductValidator $ProductValidator;
+    public CSVHandler $CSVHandler;
+
+    public function __construct(SchemeValidator $SchemeValidator, ProductValidator $ProductValidator, CSVHandler $CSVHandler)
+    {
+        $this->SchemeValidator = $SchemeValidator;
+        $this->ProductValidator = $ProductValidator;
+        $this->CSVHandler = $CSVHandler;
+    }
+
     public function addProduct(): array 
     {
         $product = new Product();
-        $SchemeValidator = new SchemeValidator();
-        if (!$SchemeValidator->isProductSchemeValid($_POST)) {
+        if (!$this->SchemeValidator->isProductSchemeValid($_POST)) {
             $message = 'Invalid product structure';
+            $responseCode = 400;
             $ErrorHandler = new ErrorHandler();
             $ErrorHandler->logError($message);
-            throw new CustomException($message);
+            throw new CustomException($message, $responseCode);
         }
         $product = $product->createFromData($_POST);
-        $productValidator = new ProductValidator();
-        $response = $productValidator->validateProduct($product);
+        $response = $this->ProductValidator->validateProduct($product);
         if ($response['success'] == 'true') {
-            $CSVHandler = new CSVHandler();
-            $CSVHandler->addProductToTable((array)$product);
+            $responseCode = 201;
+            $this->CSVHandler->addProductToTable((array)$product);
         }
-        $this->view(compact('response'));
-        return $response;
+        return [$response, $responseCode];
     }
 
     public function getAllProducts(): array  
     {
-        $CSVHandler = new CSVHandler();
-        $response = $CSVHandler->getProductsArray();
-        $this->view(compact('response'));
-        return $response;
+        $response = $this->CSVHandler->getProductsArray();
+        $responseCode = 200;
+        return [$response, $responseCode];
     }
 
     public function getProductByID(): array  
     {
-        $CSVHandler = new CSVHandler();
-        if (!$CSVHandler->productExists($_POST['code'])) {
+        if (!$this->CSVHandler->productExists($_POST['code'])) {
             $message = 'Product doesn\'t exist';
+            $responseCode = 404;
             $ErrorHandler = new ErrorHandler();
             $ErrorHandler->logError($message);
-            throw new CustomException($message);
+            throw new CustomException($message, $responseCode);
         }
-        $response = $CSVHandler->getProductById($_POST['code']);
-        $this->view(compact('response'));
-        return $response;
+        $response = $this->CSVHandler->getProductById($_POST['code']);
+        $responseCode = 200;
+        return [$response, $responseCode];
     }
 
     public function deleteProductByID(): array
     {
-        $CSVHandler = new CSVHandler();
-        if (!$CSVHandler->productExists($_POST['code'])) {
+        if (!$this->CSVHandler->productExists($_POST['code'])) {
             $message = 'Product doesn\'t exist';
+            $responseCode = 404;
             $ErrorHandler = new ErrorHandler();
             $ErrorHandler->logError($message);
-            throw new CustomException($message);
+            throw new CustomException($message, $responseCode);
         }
         $response = [
             'success' => 'true'
         ];
-        $this->view(compact('response'));
-        return $response;
+        $responseCode = 200;
+        return [$response, $responseCode];
     }
 
     public function udateProductByID($id): array 
     {
-        $CSVHandler = new CSVHandler();
-        if (!$CSVHandler->productExists($_POST['code'])) {
+        if (!$this->CSVHandler->productExists($_POST['code'])) {
             $message = 'Product doesn\'t exist';
+            $responseCode = 404;
             $ErrorHandler = new ErrorHandler();
             $ErrorHandler->logError($message);
-            throw new CustomException($message);
+            throw new CustomException($message, $responseCode);
         }
         $response = [
             'success' => 'true'
         ];
-        $this->view(compact('response'));
-        return $response;
+        $responseCode = 200;
+        return [$response, $responseCode];
     }
 
     public function getMyProducts(): array
     {
-        $CSVHandler = new CSVHandler();
-        $response = $CSVHandler->getMyProducts($_POST['user_id']);
-        $this->view(compact('response'));
-        return $response;
+        $response = $this->CSVHandler->getMyProducts($_POST['user_id']);
+        $responseCode = 200;
+        return [$response, $responseCode];
     }
 }

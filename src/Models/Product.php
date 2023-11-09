@@ -18,7 +18,7 @@ class Product
         $this->user_id = $user_id;
     }
 
-    public static function createFromData(array $productData) {
+    public static function createFromData(array $productData): Product {
         $productData = array_map('strip_tags', $productData); 
         $productData = array_map('trim', $productData);
         $product = new self();

@@ -6,11 +6,15 @@ require_once '../vendor/autoload.php';
 
 $AppStarter = new AppController();
 try {
-    $AppStarter->initAction();
+    $response = $AppStarter->initAction();
+    $AppStarter->view(compact('response'));
 } catch (CustomException $e) {
     $response = [
-        'success' => 'false',
-        'error' => $e->getMessage()
+        '0' => [
+            'success' => 'false',
+            'error' => $e->getMessage()
+        ],
+        '1' => $e->getCode()
     ];
     $AppStarter->view(compact('response'));
 }

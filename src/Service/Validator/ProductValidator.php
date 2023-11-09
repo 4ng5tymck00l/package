@@ -15,15 +15,12 @@ class ProductValidator
     private const MIN_NAME = 5;
     private const MAX_DESC = 300;
     
-    const CODE_TEMPLATE = '/^(\d{1,3})-(\d{1,})$/';
+    private const CODE_TEMPLATE = '/^(\d{1,3})-(\d{1,})$/';
 
     public function isProductCodeValid(Product $product): bool 
     {
         $code = $product->code;
-        if (empty($code)) {
-            return false;
-        }
-        if (!preg_match(self::CODE_TEMPLATE, $code)) {
+        if (empty($code) || !preg_match(self::CODE_TEMPLATE, $code)) {
             return false;
         }
         if (strlen($code) > self::MAX_CODE) {
@@ -76,28 +73,32 @@ class ProductValidator
     public function validateProduct(Product $product): array 
     {
         if (!$this->isProductCodeValid($product)) {
+            $responseCode = 400;
             $message = 'Invalid product code';
             $ErrorHandler = new ErrorHandler();
             $ErrorHandler->logError($message);
-            throw new CustomException($message);
+            throw new CustomException($message, $responseCode);
         }
         if (!$this->isProductPriceValid($product)) {
+            $responseCode = 400;
             $message = 'Invalid product price';
             $ErrorHandler = new ErrorHandler();
             $ErrorHandler->logError($message);
-            throw new CustomException($message);
+            throw new CustomException($message, $responseCode);
         }
         if (!$this->isProductNameValid($product)) {
+            $responseCode = 400;
             $message = 'Invalid product name';
             $ErrorHandler = new ErrorHandler();
             $ErrorHandler->logError($message);
-            throw new CustomException($message);
+            throw new CustomException($message, $responseCode);
         }
         if (!$this->isProductDescriptionValid($product)) {
+            $responseCode = 400;
             $message = 'Invalid product description';
             $ErrorHandler = new ErrorHandler();
             $ErrorHandler->logError($message);
-            throw new CustomException($message);
+            throw new CustomException($message, $responseCode);
         }
 
         $response = ['success' => true];

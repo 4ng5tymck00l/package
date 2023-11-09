@@ -2,13 +2,13 @@
 
 namespace App\Service\DataHandlers;
 
-define('PATH_LOG', '../files/appError.log');
-
 class ErrorHandler
 {
-    public function logError($message)
+    private const PATH_LOG = '../var/log/appError.log';
+
+    public function logError(string $message): void
     {
         $errorData = date('Y-m-d H:i:s') . ' - ' . $message . PHP_EOL;
-        file_put_contents(PATH_LOG, $errorData, FILE_APPEND);
+        file_put_contents(self::PATH_LOG, $errorData, FILE_APPEND);
     }
 }

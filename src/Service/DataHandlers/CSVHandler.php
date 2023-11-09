@@ -3,16 +3,16 @@
 namespace App\Service\DataHandlers;
 use \App\Models\Product;
 
-define('PATH_CSV', '../files/product.csv');
-
 class CSVHandler
 {
+    private const PATH_CSV = '../files/product.csv';
+
     public function getProductsArray(): array 
     {
-        $lines = file(PATH_CSV, FILE_IGNORE_NEW_LINES);
+        $lines = file(self::PATH_CSV, FILE_IGNORE_NEW_LINES);
         $keys = explode(',', $lines[0]);
         $limit = count($keys);
-    
+        $products = [];
         for ($i = 1; !empty($lines[$i]); $i++) {
             $values = explode(',', $lines[$i], $limit);
             for ($j = 0; $j < $limit; $j++) {
@@ -46,32 +46,17 @@ class CSVHandler
         return $products;
     }
 
-    public function addProductToTable($product) 
+    public function addProductToTable($product): void
     {
-        $handle = fopen(PATH_CSV, "a");
+        $handle = fopen(self::PATH_CSV, "a");
         fputcsv($handle, $product);
         fclose($handle);
-    }
-
-    public function fileToProduct(): Product 
-    {
-        
-        $file = file(PATH_CSV);
-    
-        foreach ($file as $key => $value) {
-            $cell=explode(',', $value);
-            $productData[$cell[0]]=$cell[1];
-        }
-        $product = new Product();
-        $product = $product->productFromData($productData);
-
-        return $product;
     }
 
     public function fileToProductArrayGenerator(): \Generator 
     {
 
-        $lines = file(PATH_CSV, FILE_IGNORE_NEW_LINES);
+        $lines = file(self::PATH_CSV, FILE_IGNORE_NEW_LINES);
         $keys = explode(',', $lines[0]);
         $limit = count($keys);
 
